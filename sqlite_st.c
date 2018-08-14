@@ -12,8 +12,8 @@
 
 struct Row_t {
 	uint32_t id;
-	char username[COLUMN_USERNAME_SIZE];
-	char email[COLUMN_EMAIL_SIZE];
+	char username[COLUMN_USERNAME_SIZE + 1];
+	char email[COLUMN_EMAIL_SIZE + 1];
 };
 typedef struct Row_t Row;
 
@@ -70,6 +70,8 @@ typedef enum MetaCommandResult_t MetaCommandResult;
 enum PrepareResult_t {
 	PREPARE_SUCCESS,
 	PREPARE_SYNTAX_ERROR,
+	PREPARE_STRING_TOO_LONG,
+	PREPARE_NEGATIVE_ID,
 	PREPARE_UNRECOGNIZED_STATEMENT
 };
 typedef enum PrepareResult_t PrepareResult;
@@ -85,8 +87,6 @@ enum ExecuteResult_t {
 	EXECUTE_TABLE_FULL 
 };
 typedef enum ExecuteResult_t ExecuteResult;
-
-
 
 struct Statement_t {
 	StatementType type;
@@ -220,6 +220,12 @@ int main(int argc, char* argv[]) {
 				case (PREPARE_SYNTAX_ERROR):
 					printf("Syntax Error. Could not parse statement.\n");
 					continue;
+				case (PREPARE_STRING_TOO_LONG):
+   					printf("String is too long.\n");
+   					continue;
+   				case (PREPARE_NEGATIVE_ID):
+ 			        printf("ID must be positive.\n");
+			        continue;
 				case (PREPARE_UNRECOGNIZED_STATEMENT): 
 					printf("Unrecognized keyword at start of '%s' .\n", input_buffer->buffer);
 					continue;
