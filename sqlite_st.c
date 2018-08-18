@@ -79,11 +79,19 @@ void* get_page(Pager* pager, uint32_t page_num) {
 			num_pages += 1;
 		}
 
-		if(page_num <= num_pages) {
-			lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
-		}
-	}
+	  if (page_num <= num_pages) {
+     	 lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
+      	 ssize_t bytes_read = read(pager->file_descriptor, page, PAGE_SIZE);
+     	 if (bytes_read == -1) {
+        	printf("Error reading file: %d\n", errno);
+        	exit(EXIT_FAILURE);
+        }
+    }
+    pager->pages[page_num] = page;
+  }
+  return pager->pages[page_num];
 }
+
 
 enum MetaCommandResult_t {
 	META_COMMAND_SUCCESS,
